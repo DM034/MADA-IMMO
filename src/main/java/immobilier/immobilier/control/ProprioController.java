@@ -12,6 +12,7 @@ import immobilier.immobilier.model.ChiffreAdmin;
 import immobilier.immobilier.model.ChiffreProprio;
 import immobilier.immobilier.model.Conn;
 import immobilier.immobilier.model.Login;
+import immobilier.immobilier.model.Photo;
 import immobilier.immobilier.model.Utilisateur;
 import immobilier.immobilier.model.V_biens_lib;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,6 +49,22 @@ public class ProprioController {
     @GetMapping("/dashboard")
     public String dash(Model model) {
         model.addAttribute("page", "voirDashboardPropr");
+        return "index";
+    }
+
+    @GetMapping("/detail")
+    public String detail(HttpServletRequest request, Model model, String id) {
+        try {
+            V_biens_lib vbl = new V_biens_lib().getBiensById(id);
+            Photo pht = new Photo();
+            LinkedList<Photo> phts = pht.getPhotoById(id);
+            model.addAttribute("vbl", vbl);
+            model.addAttribute("phts", phts);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        model.addAttribute("page", "detailPropr");
         return "index";
     }
 
