@@ -140,5 +140,79 @@ GROUP BY dates.mois
 ORDER BY dates.mois;
 
 
+CREATE OR REPLACE VIEW v_biens_lib AS 
+SELECT b.id, b.nom, b.description, b.region, b.loyer, b.idProprio, p.username, b.etat, b.idType, t.nom as type FROM biens as b
+    JOIN utilisateur p on p.id = b.idProprio
+    JOIN type_biens t on t.id = b.idType; 
+
+
+--------------------------------------------------------------
+SELECT b.id, b.nom, b.description, b.region, b.loyer, b.idProprio, p.username, b.etat, b.idType, t.nom as type, ph.nom as url FROM biens as b
+    JOIN utilisateur p on p.id = b.idProprio
+    JOIN type_biens t on t.id = b.idType
+    LEFT JOIN photo ph on ph.idBiens = b.id; 
+
+-------------------------------------------------------------
+WITH RECURSIVE mois_complets AS (
+    SELECT DATE_TRUNC('month', MIN(l.date_debut)) AS mois
+    FROM location l
+    UNION ALL
+    SELECT mois + INTERVAL '1 month'
+    FROM mois_complets
+    WHERE mois < DATE_TRUNC('month', (SELECT MAX(l.date_debut + (l.duree || ' months')::INTERVAL) FROM location l))
+), locations_mensuelles AS (
+    SELECT 
+        mc.mois,
+        l.id AS location_id,
+        b.id AS bien_id,
+        b.nom AS biens,
+        b.region AS bien_adresse,
+        tb.nom AS bien_type,
+        u.id AS utilisateur_id,
+        u.username AS utilisateur_nom,
+        COALESCE(
+            (SELECT la.montant 
+             FROM loyer_mensuel la
+             WHERE la.idBiens = b.id
+               AND la.date_changement <= l.date_debut
+             ORDER BY la.date_changement DESC
+             LIMIT 1),
+            b.loyer
+        ) AS montant_mensuel,
+        c.valeur AS commission_pourcentage
+    FROM mois_complets mc
+    CROSS JOIN location l
+    JOIN biens b ON l.idBiens = b.id
+    JOIN type_biens tb ON b.idType = tb.id
+    JOIN commission c ON tb.id = c.idType
+    JOIN utilisateur u ON b.idProprio = u.id
+    WHERE mc.mois >= DATE_TRUNC('month', l.date_debut)
+      AND mc.mois < DATE_TRUNC('month', l.date_debut + (l.duree || ' months')::INTERVAL)
+      AND u.profil = 'proprio'
+)
+SELECT 
+    lm.utilisateur_id as idProprio,
+    lm.utilisateur_nom as proprio,
+    lm.bien_id as idBiens,
+    lm.biens as biens,
+    lm.bien_adresse as region,
+    lm.bien_type as type,
+    lm.location_id as idLocation,
+    TO_CHAR(lm.mois, 'YYYY-MM-DD') AS date,
+    lm.montant_mensuel AS ca,
+    lm.montant_mensuel * (lm.commission_pourcentage::float / 100) AS co,
+    lm.montant_mensuel * (1 - lm.commission_pourcentage::float / 100) AS gains
+FROM locations_mensuelles lm
+WHERE  lm.utilisateur_id = 'USE00001' AND lm.mois BETWEEN '2024-01-01' AND '2024-12-31' 
+ORDER BY lm.utilisateur_id, lm.bien_id, lm.location_id, lm.mois;
+----------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 

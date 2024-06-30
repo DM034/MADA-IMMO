@@ -96,7 +96,19 @@
           <div th:if="${user.profil == 'user'}">
 
             <div class="app-brand demo">
-              <a th:href="@{/prk/}" class="app-brand-link">
+              <a th:href="@{/client/}" class="app-brand-link">
+                <img src="/assets/img/favicon/MADA-IMMO.png" alt="" width="225 px" height="225 px">
+              </a>
+              
+              <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                <i class="bx bx-chevron-left bx-sm align-middle"></i>
+              </a>
+            </div>
+          </div>
+          <div th:if="${user.profil == 'proprio'}">
+
+            <div class="app-brand demo">
+              <a th:href="@{/proprio/}" class="app-brand-link">
                 <img src="/assets/img/favicon/MADA-IMMO.png" alt="" width="225 px" height="225 px">
               </a>
               
@@ -153,6 +165,38 @@
             </li>
           </ul>
           </div>
+          <div th:if="${user.profil == 'proprio'}">
+            <ul>
+              <li class="menu-item">
+                <a class="nav-link collapsed  menu-link menu-toggle" data-bs-target="#biens-nav" data-bs-toggle="collapse" href="javascript:void(0);">
+                    <i class="menu-icon tf-icons bx bx-list-check"></i><span>Biens</span>
+                </a>
+                <ul id="biens-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                  <!-- Dashboard -->
+                  <li class="menu-item">
+                    <a th:href="@{/proprio/mesBiens}" class="menu-link">
+                      <i class="menu-icon tf-icons bx bx-list-check"></i>
+                      <div data-i18n="Analytics">Liste de mes Biens</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="menu-item">
+                <a class="nav-link collapsed  menu-link menu-toggle" data-bs-target="#dash-nav" data-bs-toggle="collapse" href="javascript:void(0);">
+                    <i class="menu-icon tf-icons bx bxs-dashboard"></i><span>Dashboard</span>
+                </a>
+                <ul id="dash-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                  <!-- Dashboard -->
+                  <li class="menu-item">
+                    <a th:href="@{/proprio/dashboard}" class="menu-link">
+                      <i class="menu-icon tf-icons bx bxs-dashboard"></i>
+                      <div data-i18n="Analytics">Chiffre d'affaires</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            </div>
         </aside>
         <!-- / Menu -->
         

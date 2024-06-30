@@ -34,6 +34,12 @@ public class Utilisateur extends JDBC {
 		return login;
 	}
 
+	public Utilisateur getIdUtilisateurByUsername(String username) throws Exception {
+		Utilisateur eq = (Utilisateur) new Utilisateur().select("where username = '"+username+"'").getFirst();
+		return eq;
+	}
+
+
 	public Utilisateur() throws Exception {
 
 	}
