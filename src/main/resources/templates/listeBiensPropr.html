@@ -1,0 +1,91 @@
+<section>
+
+  <!-- Content wrapper -->
+  <div class="content-wrapper">
+    <!-- Content -->
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+      <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Mes Biens</span></h4>
+      <div class="row">
+        <div class="col-lg-6 col-md-12 col-6 mb-4" th:each="vbl : ${vbl}">
+          <div class="card">
+            <div class="card-body">
+              <div>
+                <span>
+                  Nom :
+                </span>
+                <b class="card-title mb-2" th:text="${vbl.getNom()}">
+                </b>
+              </div>
+              <div>
+                <span>
+                  Description :
+                </span>
+                <b class="card-title mb-2" th:text="${vbl.getDescription()}">
+                </b>
+              </div>
+              <div>
+                <span>
+                  Region :
+                </span>
+                <b class="card-title mb-2" th:text="${vbl.getRegion()}">
+                </b>
+              </div>
+              <div>
+                <span>
+                  Loyer :
+                </span>
+                <b class="card-title mb-2" th:text="${vbl.getLoyer()}">
+                </b>
+              </div>
+              <div>
+                <span>
+                  Type :
+                </span>
+                <b class="card-title mb-2" th:text="${vbl.getType()}">
+                </b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="col-md-4" style="float: inline-end;">
+          <input type="text" id="searchInput" placeholder="Rechercher..." class="form-control">
+        </div>
+        <table id="pointsTable" class="table">
+          <thead>
+            <tr>
+              <th>
+                <span>Nom</span><span class="sort-icon"></span>
+              </th>
+              <th>
+                <span>Description</span><span class="sort-icon"></span>
+              </th>
+              <th>
+                <span>Region</span><span class="sort-icon"></span>
+              </th>
+              <th>
+                <span>Loyer</span><span class="sort-icon"></span>
+              </th>
+              <th>
+                <span>Type</span><span class="sort-icon"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            <tr th:each="vbl : ${vbl}">
+              <td th:text="${vbl.getNom()}"></td>
+              <td th:text="${vbl.getDescription()}"></td>
+              <td th:text="${vbl.getRegion()}"></td>
+              <td th:text="${vbl.getLoyer()}"></td>
+              <td th:text="${vbl.getType()}"></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+
+</section>

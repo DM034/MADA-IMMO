@@ -72,7 +72,7 @@ public class ChiffreAdmin {
                         rSet.getString(1),
                         rSet.getDouble(2),
                         rSet.getDouble(3),
-                        rSet.getDouble(3));
+                        rSet.getDouble(4));
                 result.add(vrest);
             }
             if (open == true) {
