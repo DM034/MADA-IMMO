@@ -60,14 +60,13 @@ public class ChiffreProprio {
             +"        ) AS montant_mensuel, "
             +"        c.valeur AS commission_pourcentage "
             +"    FROM mois_complets mc "
-            +"    CROSS JOIN location l "
+            +"    JOIN location l ON mc.mois >= DATE_TRUNC('month', l.date_debut) "
+            +"        AND mc.mois < DATE_TRUNC('month', l.date_debut + (l.duree || ' months')::INTERVAL) "
             +"    JOIN biens b ON l.idBiens = b.id "
             +"    JOIN type_biens tb ON b.idType = tb.id "
             +"    JOIN commission c ON tb.id = c.idType "
             +"    JOIN utilisateur u ON b.idProprio = u.id "
-            +"    WHERE mc.mois >= DATE_TRUNC('month', l.date_debut) "
-            +"      AND mc.mois < DATE_TRUNC('month', l.date_debut + (l.duree || ' months')::INTERVAL) "
-            +"      AND u.profil = 'proprio' "
+            +"    WHERE u.profil = 'proprio' "
             +") "
             +"SELECT  "
             +"    lm.utilisateur_id as idProprio, "
@@ -82,7 +81,9 @@ public class ChiffreProprio {
             +"    lm.montant_mensuel * (lm.commission_pourcentage::float / 100) AS co, "
             +"    lm.montant_mensuel * (1 - lm.commission_pourcentage::float / 100) AS gains "
             +"FROM locations_mensuelles lm "
-            +"WHERE lm.utilisateur_id = '"+idProprio+"' AND lm.mois BETWEEN '"+date1+"' AND '"+date2+"' "
+            +"WHERE lm.utilisateur_id = '"+idProprio+"'  "
+            +"  AND lm.mois BETWEEN DATE_TRUNC('month', '"+date1+"'::date)  "
+            +"  AND DATE_TRUNC('month', '"+date2+"'::date) "
             +"ORDER BY lm.utilisateur_id, lm.bien_id, lm.location_id, lm.mois";
             System.out.println(sql);
             ResultSet rSet = stat.executeQuery(sql);

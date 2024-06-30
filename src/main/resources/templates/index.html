@@ -197,6 +197,24 @@
               </li>
             </ul>
             </div>
+          <div th:if="${user.profil == 'user'}">
+            <ul>
+              <li class="menu-item">
+                <a class="nav-link collapsed  menu-link menu-toggle" data-bs-target="#loyer-nav" data-bs-toggle="collapse" href="javascript:void(0);">
+                    <i class="menu-icon tf-icons bx bx-list-check"></i><span>Loyer</span>
+                </a>
+                <ul id="loyer-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                  <!-- Dashboard -->
+                  <li class="menu-item">
+                    <a th:href="@{/client/}" class="menu-link">
+                      <i class="menu-icon tf-icons bx bx-list-check"></i>
+                      <div data-i18n="Analytics">Mes Loyers</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            </div>
         </aside>
         <!-- / Menu -->
         
