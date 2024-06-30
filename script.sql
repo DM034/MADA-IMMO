@@ -139,7 +139,7 @@ LEFT JOIN locations_mensuelles lm ON dates.mois = lm.mois
 GROUP BY dates.mois
 ORDER BY dates.mois;
 
-
+-------------------------------------------------------------------------
 CREATE OR REPLACE VIEW v_biens_lib AS 
 SELECT b.id, b.nom, b.description, b.region, b.loyer, b.idProprio, p.username, b.etat, b.idType, t.nom as type FROM biens as b
     JOIN utilisateur p on p.id = b.idProprio
@@ -203,16 +203,67 @@ SELECT
     lm.montant_mensuel * (lm.commission_pourcentage::float / 100) AS co,
     lm.montant_mensuel * (1 - lm.commission_pourcentage::float / 100) AS gains
 FROM locations_mensuelles lm
-WHERE  lm.utilisateur_id = 'USE00001' AND lm.mois BETWEEN '2024-01-01' AND '2024-12-31' 
+WHERE  lm.utilisateur_id = 'USE00001' AND lm.mois BETWEEN '2024-03-15' AND '2024-06-30' 
 ORDER BY lm.utilisateur_id, lm.bien_id, lm.location_id, lm.mois;
-----------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
+---------------------------------------------------------------------------------------------
+WITH RECURSIVE mois_complets AS (
+    SELECT DATE_TRUNC('month', MIN(l.date_debut)) AS mois
+    FROM location l
+    UNION ALL
+    SELECT mois + INTERVAL '1 month'
+    FROM mois_complets
+    WHERE mois < DATE_TRUNC('month', (SELECT MAX(l.date_debut + (l.duree || ' months')::INTERVAL) FROM location l))
+), locations_mensuelles AS (
+    SELECT 
+        mc.mois,
+        l.id AS location_id,
+        b.id AS bien_id,
+        b.nom AS biens,
+        b.region AS bien_adresse,
+        tb.nom AS bien_type,
+        u_proprio.id AS utilisateur_id,
+        u_proprio.username AS utilisateur_nom,
+        u_client.id AS client_id,
+        u_client.username AS client_nom,
+        COALESCE(
+            (SELECT la.montant 
+             FROM loyer_mensuel la
+             WHERE la.idBiens = b.id
+               AND la.date_changement <= l.date_debut
+             ORDER BY la.date_changement DESC
+             LIMIT 1),
+            b.loyer
+        ) AS montant_mensuel,
+        c.valeur AS commission_pourcentage
+    FROM mois_complets mc
+    JOIN location l ON mc.mois >= DATE_TRUNC('month', l.date_debut)
+        AND mc.mois < DATE_TRUNC('month', l.date_debut + (l.duree || ' months')::INTERVAL)
+    JOIN biens b ON l.idBiens = b.id
+    JOIN type_biens tb ON b.idType = tb.id
+    JOIN commission c ON tb.id = c.idType
+    JOIN utilisateur u_proprio ON b.idProprio = u_proprio.id
+    JOIN utilisateur u_client ON l.idClient = u_client.id
+    WHERE u_client.profil = 'user'
+)
+SELECT 
+    lm.client_id as idClient,
+    lm.client_nom as client,
+    lm.utilisateur_id as idProprio,
+    lm.utilisateur_nom as proprio,
+    lm.bien_id as idBiens,
+    lm.biens as biens,
+    lm.bien_adresse as region,
+    lm.bien_type as type,
+    lm.location_id as idLocation,
+    TO_CHAR(lm.mois, 'YYYY-MM-DD') AS date,
+    lm.montant_mensuel AS montant,
+    CASE
+        WHEN lm.mois <= DATE_TRUNC('month', CURRENT_DATE) THEN 'Payé'
+        ELSE 'À payer'
+    END AS statut_paiement
+FROM locations_mensuelles lm
+WHERE lm.client_id = 'USE00004'
+  AND lm.mois BETWEEN DATE_TRUNC('month', '2024-03-15'::DATE) AND DATE_TRUNC('month', '2024-08-30'::DATE)
+ORDER BY lm.utilisateur_id, lm.bien_id, lm.location_id, lm.mois;
 
 
