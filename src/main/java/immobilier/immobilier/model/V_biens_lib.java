@@ -32,6 +32,12 @@ public class V_biens_lib extends JDBC {
 	@ColumnField(columnName = "type")
 	String type;
 
+	public V_biens_lib getBiensById(String id)throws Exception{
+		LinkedList<V_biens_lib> vb = new V_biens_lib().select("where id = '"+id+"'");
+		V_biens_lib v = vb.getFirst();
+		return v;
+	}
+
 	public LinkedList<V_biens_lib> getBiensByPropr(String idPropr)throws Exception{
 		LinkedList<V_biens_lib> vb = new V_biens_lib().select("where idproprio = '"+idPropr+"'");
 		return vb;

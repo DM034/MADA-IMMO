@@ -1,74 +1,75 @@
 package immobilier.immobilier.model;
-import immobilier.immobilier.annotation.ColumnField; 
-import immobilier.immobilier.annotation.Getter; 
-import immobilier.immobilier.annotation.Setter; 
-import immobilier.immobilier.annotation.TableName; 
-import immobilier.immobilier.table.JDBC; 
-import java.sql.Connection; 
 
+import immobilier.immobilier.annotation.ColumnField;
+import immobilier.immobilier.annotation.Getter;
+import immobilier.immobilier.annotation.Setter;
+import immobilier.immobilier.annotation.TableName;
+import immobilier.immobilier.table.JDBC;
+import java.sql.Connection;
+import java.util.LinkedList;
 
 @TableName(database = "immobilier", driver = "postgres", name = "photo", password = "366325", user = "postgres")
 public class Photo extends JDBC {
 
-    @ColumnField(columnName = "id" ,primaryKey = true, defaultValue = true ) 
-String id;
-    @ColumnField(columnName = "idbiens" ) 
-String idbiens;
-    @ColumnField(columnName = "nom" ) 
-String nom;
-    
+	@ColumnField(columnName = "id", primaryKey = true, defaultValue = true)
+	String id;
+	@ColumnField(columnName = "idbiens")
+	String idbiens;
+	@ColumnField(columnName = "nom")
+	String nom;
 
-    public Photo() throws Exception{
+	public LinkedList<Photo> getPhotoById(String idBiens)throws Exception{
+		LinkedList<Photo> pht = new Photo().select("where idBiens = '"+idBiens+"'");
+		return pht;
+	}
+	
+	public Photo() throws Exception {
 
-    }
+	}
 
-    public Photo(String idbiens ,String nom)throws Exception{
-setIdbiens(idbiens.trim()); 
-setNom(nom.trim()); 
-}
+	public Photo(String idbiens, String nom) throws Exception {
+		setIdbiens(idbiens.trim());
+		setNom(nom.trim());
+	}
 
-    	public int count(Connection connection) throws Exception { 
-  int count = 0;
- try { 
-     count = select(connection).size();
- } catch (Exception e) {
-    e.printStackTrace();
-}
-return count;
- } 
+	public int count(Connection connection) throws Exception {
+		int count = 0;
+		try {
+			count = select(connection).size();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return count;
+	}
 
-    
-    	 @Getter(columnName = "id")
+	@Getter(columnName = "id")
 	public String getId() {
-      	return this.id; 
-	} 
+		return this.id;
+	}
 
-	 @Setter(columnName = "id")
-	public void setId(String id) { 
-      	this.id=id;
-	} 
+	@Setter(columnName = "id")
+	public void setId(String id) {
+		this.id = id;
+	}
 
-	 @Getter(columnName = "idbiens")
+	@Getter(columnName = "idbiens")
 	public String getIdbiens() {
-      	return this.idbiens; 
-	} 
+		return this.idbiens;
+	}
 
-	 @Setter(columnName = "idbiens")
-	public void setIdbiens(String idbiens) { 
-      	this.idbiens=idbiens;
-	} 
+	@Setter(columnName = "idbiens")
+	public void setIdbiens(String idbiens) {
+		this.idbiens = idbiens;
+	}
 
-	 @Getter(columnName = "nom")
+	@Getter(columnName = "nom")
 	public String getNom() {
-      	return this.nom; 
-	} 
+		return this.nom;
+	}
 
-	 @Setter(columnName = "nom")
-	public void setNom(String nom) { 
-      	this.nom=nom;
-	} 
-
-
-
+	@Setter(columnName = "nom")
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
 
 }
