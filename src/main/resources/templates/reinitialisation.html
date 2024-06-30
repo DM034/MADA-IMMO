@@ -1,0 +1,9 @@
+<section>
+    <div th:if="${message != null && !message.isEmpty()}" class="alert alert-danger border-0 alert-dismissible fade show col-lg-4" role="alert">
+        <span th:utext="${message}"> </span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <a th:href="@{/admin/reinit}">
+        <button type="button" class="btn btn-warning">Reinitialiser Base</button>
+    </a>
+</section>

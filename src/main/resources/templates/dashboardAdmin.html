@@ -1,0 +1,348 @@
+<section>
+
+    <!-- Content wrapper -->
+    <div class="content-wrapper">
+      <!-- Content -->
+  
+      <div class="container-xxl flex-grow-1 container-p-y">
+        <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Chiffre d'affaires et gains</span></h4>
+        <div class="row">
+            <div class="col-lg-6 col-md-12 col-6 mb-4">
+              <div class="card">
+                <div class="card-body">
+                  <div class="card-title d-flex align-items-start justify-content-between">
+                    <div class="avatar flex-shrink-0">
+                      <img src="../assets/img/icons/unicons/chart-success.png" alt="chart success" class="rounded">
+                    </div>
+                  </div>
+                  <span class="fw-semibold d-block mb-1">Chiffre d'affaires</span>
+                  <h3 class="card-title mb-2" th:text="${totCa}"></h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-12 col-6 mb-4">
+              <div class="card">
+                <div class="card-body">
+                  <div class="card-title d-flex align-items-start justify-content-between">
+                    <div class="avatar flex-shrink-0">
+                      <img src="../assets/img/icons/unicons/wallet-info.png" alt="Credit Card" class="rounded">
+                    </div>
+                  </div>
+                  <span>Commissions</span>
+                  <h3 class="card-title text-nowrap mb-1" th:text="${totCo}"></h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div>
+          <canvas id="barChart" style="max-height: 400px"></canvas>
+        </div>
+        <div>
+          <div class="col-md-4" style="float: inline-end;">
+            <input type="text" id="searchInput" placeholder="Rechercher..." class="form-control">
+          </div>
+          <table id="pointsTable" class="table">
+            <thead>
+              <tr>
+                <th>
+                  <span onclick="sortTable(0)">Mois</span><span class="sort-icon"></span>
+                </th>
+                <th>
+                  <span onclick="sortTable(1)">Chiffre d'affaires</span><span class="sort-icon"></span>
+                </th>
+                <th>
+                  <span onclick="sortTable(2)">Commissions</span><span class="sort-icon"></span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+              <tr th:each="cas : ${cas}">
+                <td th:text="${cas.getDate()}"></td>
+                <td  th:text="${cas.getChiffre_affaires()}"></td>
+                <td  th:text="${cas.getCommissions()}"></td>
+            </tr>
+            </tbody>
+          </table>
+          
+  
+          <div class="clearfix">
+            <ul th:each=" pg : ${pg}" class="pagination">
+              <li class="page-item disabled"><a th:text="${pg}" href="#"></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+  
+      <script src="/assets/js/chart/chart.umd.js"></script>
+  
+  
+  
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        console.log("eh");
+  
+        document.addEventListener("DOMContentLoaded", () => {
+          new Chart(document.querySelector("#barChart"), {
+            type: "bar",
+            data: {
+              labels: /*[[${labels}]]*/[],
+              datasets: [
+                {
+                  label: "Points",
+                  data: /*[[${data}]]*/[],
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
+        });
+        /*]]>*/
+      </script>
+  
+    
+  <!-- 
+      <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+          const table = document.getElementById('pointsTable');
+          const rows = table.getElementsByTagName('TR');
+          let rank = 1;
+      
+          for (let i = 1; i < rows.length; i++) {
+            const rankCell = rows[i].getElementsByClassName('rank')[0];
+          const prevPointsCell = rows[i - 1].getElementsByClassName('points')[0];
+          const currentPointsCell = rows[i].getElementsByClassName('points')[0];
+          
+          const prevPoints = parseInt(prevPointsCell.innerHTML);
+          const currentPoints = parseInt(currentPointsCell.innerHTML);
+  
+          if (currentPoints === prevPoints) {
+              // Same points, same rank
+              rankCell.innerHTML = rows[i - 1].getElementsByClassName('rank')[0].innerHTML;
+              rank = rank - 1;
+  
+              // Change the color for same points
+              prevPointsCell.style.color = 'red';
+              currentPointsCell.style.color = 'red';
+          } else {
+              // Different points, increment rank
+              rankCell.innerHTML = rank;
+  
+              // Reset color for different points
+              prevPointsCell.style.color = '';
+              currentPointsCell.style.color = '';
+          }
+  
+          // Increment rank for next row
+          rank++;
+        }
+      });
+      
+      </script> -->
+  
+  <script>
+  
+        // Function to calculate and display ranks
+        function calculateRanks() {
+          const table = document.getElementById('table');
+          const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+          let rank = 1;
+          let ex = 'ex aequo'
+  
+          for (let i = 0; i < rows.length; i++) {
+            const rankCell = rows[i].getElementsByClassName('rank')[0];
+            const ex = rows[i].getElementsByClassName('ex')[3];
+            if (i > 0) {
+              const prevPoints = parseInt(rows[i - 1].getElementsByTagName("TD")[2].innerHTML);
+              const currentPoints = parseInt(rows[i].getElementsByTagName("TD")[2].innerHTML);
+              const ex = parseInt(rows[i].getElementsByTagName("TD")[3].innerHTML);
+              if (currentPoints === prevPoints) {
+              // Same points, same rank
+              rankCell.innerHTML = rows[i - 1].getElementsByClassName('rank')[0].innerHTML;
+              ex.innerHTML = rows[i - 1].getElementsByClassName('ex')[0].innerHTML;
+              rank = rank - 1;
+  
+              // Change the color for same points
+              prevPointsCell.style.color = 'red';
+              currentPointsCell.style.color = 'red';
+          } else {
+              // Different points, increment rank
+              rankCell.innerHTML = rank;
+  
+              // Reset color for different points
+              prevPointsCell.style.color = '';
+              currentPointsCell.style.color = '';
+          }
+            } else {
+              // First row
+              rankCell.innerHTML = rank;
+            }
+            rank++;
+          }
+        }
+  
+        // Sort table function
+        function sortTable(n) {
+          const table = document.getElementById('table');
+          let rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+          switching = true;
+          dir = "desc";
+          while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+              shouldSwitch = false;
+              x = rows[i].getElementsByTagName("TD")[n];
+              y = rows[i + 1].getElementsByTagName("TD")[n];
+              if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                  shouldSwitch = true;
+                  break;
+                }
+              } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                  shouldSwitch = true;
+                  break;
+                }
+              }
+            }
+            if (shouldSwitch) {
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+              switchcount++;
+            } else {
+              if (switchcount == 0 && dir == "desc") {
+                dir = "asc";
+                switching = true;
+              }
+            }
+          }
+          calculateRanks();
+        }
+  
+        // Initial rank calculation
+        window.onload = calculateRanks;
+  
+        function sortTable(columnIndex) {
+          var table, rows, switching, i, x, y, shouldSwitch;
+          table = document.getElementById("table");
+          switching = true;
+  
+          // Récupérer l'état actuel de l'icône de tri
+          var sortIcon = table.querySelector("th:nth-child(" + (columnIndex + 1) + ") .sort-icon");
+          var ascending = true;
+          if (sortIcon && sortIcon.classList.contains("asc")) {
+            ascending = false;
+          }
+  
+          while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < rows.length - 1; i++) {
+              shouldSwitch = false;
+              x = rows[i].getElementsByTagName("td")[columnIndex];
+              y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+              var xValue = x.textContent || x.innerText;
+              var yValue = y.textContent || y.innerText;
+  
+              if (ascending ? xValue.toLowerCase() > yValue.toLowerCase() : xValue.toLowerCase() < yValue.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
+            }
+            if (shouldSwitch) {
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+            }
+          }
+  
+          // Réinitialiser toutes les icônes de tri
+          var headers = table.getElementsByTagName("th");
+          for (var i = 0; i < headers.length; i++) {
+            headers[i].classList.remove("asc", "desc");
+          }
+  
+          // Ajouter ou supprimer la classe asc ou desc à l'en-tête cliqué
+          if (sortIcon) {
+            if (ascending) {
+              sortIcon.classList.remove("desc");
+              sortIcon.classList.add("asc");
+            } else {
+              sortIcon.classList.remove("asc");
+              sortIcon.classList.add("desc");
+            }
+          }
+        }
+  
+        document.addEventListener("DOMContentLoaded", function () {
+          var input = document.getElementById("searchInput");
+  
+          input.addEventListener("keyup", function () {
+            var filter = input.value.toUpperCase();
+            var table = document.getElementById("table");
+            var rows = table.getElementsByTagName("tr");
+  
+            for (var i = 1; i < rows.length; i++) {
+              var cells = rows[i].getElementsByTagName("td");
+              var found = false;
+              for (var j = 0; j < cells.length; j++) {
+                var cell = cells[j];
+                if (cell) {
+                  var textValue = cell.textContent || cell.innerText;
+                  if (textValue.toUpperCase().indexOf(filter) > -1) {
+                    found = true;
+                    break;
+                  }
+                }
+              }
+              rows[i].style.display = found ? "" : "none";
+            }
+          });
+        });
+  
+        // Fonction pour charger les données avec un offset donné
+        function loadDataWithOffset(offset, pageSize) {
+          // Mettez ici le code pour charger les données à partir de la source de données en utilisant l'offset et la taille de la page
+          console.log('Charger les données avec offset :', offset, 'et taille de page :', pageSize);
+          // Par exemple, vous pouvez appeler une fonction AJAX pour charger les données du serveur
+        }
+  
+        // Fonction pour aller à une page spécifique avec offset et taille de page
+        function goToPage(page) {
+          // Récupérer la taille de page sélectionnée
+          var pageSize = document.getElementById("pageSizeSelector").value;
+  
+          // Calculer l'offset en fonction du numéro de page et de la taille de la page
+          var offset = (page - 1) * pageSize;
+  
+          // Mettez ici le code pour charger les données en utilisant l'offset et la taille de page
+          loadDataWithOffset(offset, pageSize);
+  
+          // Vous pouvez également mettre à jour l'état de l'interface utilisateur ou effectuer d'autres actions nécessaires
+        }
+  
+        // Fonction pour changer la taille de la page
+        function changePageSize() {
+          // Charger les données de la première page lorsque la taille de la page est modifiée
+          goToPage(1);
+        }
+  
+  
+  
+        // Appel de la fonction de pagination
+        var totalItems = 3; // Par exemple, nombre total d'éléments
+        var currentPage = 1; // Par exemple, numéro de page actuelle
+        var pageSize = 1; // Par exemple, taille de la page
+        var paginationContainer = document.getElementById('paginationContainer');
+        paginationContainer.innerHTML = createPagination(totalItems, currentPage, pageSize);
+  
+      </script>
+  
+  
+  </section>
