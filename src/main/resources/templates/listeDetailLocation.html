@@ -154,26 +154,7 @@
   <div class="content-wrapper">
     <!-- Content -->
     <div class="container-xxl flex-grow-1 container-p-y">
-      <h4 class="fw-bold py-3 mb-4">Mes Biens</h4>
-      <div class="row">
-        <div class="col-lg-6 col-md-12 col-6 mb-4" th:each="vbl : ${vbl}">
-          <div class="card">
-            <div class="card-body">
-              <div><span>Nom :</span> <b th:text="${vbl.getNom()}"></b></div>
-              <div><span>Description :</span> <b th:text="${vbl.getDescription()}"></b></div>
-              <div><span>Region :</span> <b th:text="${vbl.getRegion()}"></b></div>
-              <div><span>Loyer :</span> <b th:text="${vbl.getLoyer()}"></b></div>
-              <div><span>Type :</span> <b th:text="${vbl.getType_bien()}"></b></div>
-              <div><span>Date disponibilite :</span> <b th:text="${vbl.getDate_disponibilite()}"></b></div>
-              <div class="mt-3">
-                <a th:href="@{/proprio/detail(id=${vbl.getIdbiens()})}">
-                  <button class="btn btn-primary d-grid" type="submit">Voir les détails</button>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <h4 class="fw-bold py-3 mb-4">Detail location</h4>
       <div class="mt-4">
         <div class="col-md-4 mb-3" style="float: right;">
           <input type="text" id="searchInput" placeholder="Rechercher..." class="form-control">
@@ -182,25 +163,21 @@
           <thead>
             <tr>
               <th><span>Nom</span><span class="sort-icon"></span></th>
-              <th><span>Description</span><span class="sort-icon"></span></th>
-              <th><span>Region</span><span class="sort-icon"></span></th>
+              <th><span>Date debut</span><span class="sort-icon"></span></th>
               <th><span>Loyer</span><span class="sort-icon"></span></th>
-              <th><span>Type</span><span class="sort-icon"></span></th>
-              <th><span>Date disponibilite</span><span class="sort-icon"></span></th>
-              <th>Actions</th>
+              <th><span>Commission</span><span class="sort-icon"></span></th>
+              <th><span>%</span><span class="sort-icon"></span></th>
+              <th><span>Etat</span><span class="sort-icon"></span></th>
             </tr>
           </thead>
           <tbody class="table-border-bottom-0">
-            <tr th:each="vbl : ${vbl}">
-              <td th:text="${vbl.getNom()}"></td>
-              <td th:text="${vbl.getDescription()}"></td>
-              <td th:text="${vbl.getRegion()}"></td>
-              <td th:text="${vbl.getLoyer()}"></td>
-              <td th:text="${vbl.getType_bien()}"></td>
-              <td th:text="${vbl.getDate_disponibilite()}"></td>
-              <td>
-                <a th:href="@{/proprio/detail(id=${vbl.getIdbiens()})}">Voir détails</a>
-              </td>
+            <tr th:each="locs : ${locs}">
+              <td th:text="${locs.getBiens()}"></td>
+              <td th:text="${locs.getDate_debut()}"></td>
+              <td th:text="${locs.getMontant()}"></td>
+              <td th:text="${locs.getCo()}"></td>
+              <td th:text="${locs.getCommission_pourcentage()}"></td>
+              <td th:classappend="${locs.getColors()}"  th:text="${locs.getStatut_paiement()}"></td>
             </tr>
           </tbody>
         </table>

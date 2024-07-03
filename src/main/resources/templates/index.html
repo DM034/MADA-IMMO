@@ -136,6 +136,27 @@
               </ul>
             </li>
             <li class="menu-item">
+              <a class="nav-link collapsed  menu-link menu-toggle" data-bs-target="#loc-nav" data-bs-toggle="collapse" href="javascript:void(0);">
+                  <i class="menu-icon tf-icons bx bxs-dashboard"></i><span>Location</span>
+              </a>
+              <ul id="loc-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <!-- Dashboard -->
+                <li class="menu-item">
+                  <a th:href="@{/admin/listeLocation}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bxs-dashboard"></i>
+                    <div data-i18n="Analytics">Liste Location</div>
+                  </a>
+                </li>
+                <!-- Dashboard -->
+                <li class="menu-item">
+                  <a th:href="@{/admin/location}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bxs-dashboard"></i>
+                    <div data-i18n="Analytics">Nouvelle Location</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="menu-item">
               <a class="nav-link collapsed  menu-link menu-toggle" data-bs-target="#import-nav" data-bs-toggle="collapse" href="javascript:void(0);">
                   <i class="menu-icon tf-icons bx bxs-file-import"></i><span>Import</span>
               </a>

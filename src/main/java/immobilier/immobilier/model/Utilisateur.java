@@ -6,6 +6,7 @@ import immobilier.immobilier.annotation.Setter;
 import immobilier.immobilier.annotation.TableName;
 import immobilier.immobilier.table.JDBC;
 import java.sql.Connection;
+import java.util.LinkedList;
 
 @TableName(database = "immobilier", driver = "postgres", name = "utilisateur", password = "366325", user = "postgres")
 public class Utilisateur extends JDBC {
@@ -39,6 +40,10 @@ public class Utilisateur extends JDBC {
 		return eq;
 	}
 
+	public LinkedList<Utilisateur> getAllClient()throws Exception{
+		LinkedList<Utilisateur> bs = new Utilisateur().select("where profil = 'user'");
+		return bs;
+	}
 
 	public Utilisateur() throws Exception {
 

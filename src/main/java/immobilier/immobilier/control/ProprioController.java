@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import immobilier.immobilier.model.ChiffreAdmin;
 import immobilier.immobilier.model.ChiffreProprio;
 import immobilier.immobilier.model.Conn;
+import immobilier.immobilier.model.Disponiblite;
 import immobilier.immobilier.model.Login;
 import immobilier.immobilier.model.Photo;
 import immobilier.immobilier.model.Utilisateur;
 import immobilier.immobilier.model.V_biens_lib;
+import immobilier.immobilier.model.V_detail_biens_disponibilite;
+import immobilier.immobilier.tools.Tools;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
@@ -29,7 +32,7 @@ public class ProprioController {
             String username = log.getUsername();
             String idUser = new Utilisateur().getIdUtilisateurByUsername(username).getId();
             ChiffreProprio cp = new ChiffreProprio();
-            LinkedList<ChiffreProprio> cps = cp.getChiffreProprioEntre2Dates(idUser, date1, date2, con);
+            LinkedList<ChiffreProprio> cps = cp.getChiffreProprioSansComm1erMoisEntre2Dates(idUser, date1, date2, con);
             Double totCa = 0.;
             Double gains = 0.;
             for (ChiffreProprio ch : cps) {
@@ -37,8 +40,8 @@ public class ProprioController {
                 gains = gains + ch.getGains();
             }
             model.addAttribute("cps", cps);
-            model.addAttribute("totCa", totCa);
-            model.addAttribute("gains", gains);
+            model.addAttribute("totCa", Tools.formatThousand(totCa));
+            model.addAttribute("gains", Tools.formatThousand(gains));
         } catch (Exception e) {
             // TODO: handle exception
         }
@@ -55,9 +58,9 @@ public class ProprioController {
     @GetMapping("/detail")
     public String detail(HttpServletRequest request, Model model, String id) {
         try {
-            V_biens_lib vbl = new V_biens_lib().getBiensById(id);
+            V_detail_biens_disponibilite vbl = new V_detail_biens_disponibilite().getBiensById(id);
             Photo pht = new Photo();
-            LinkedList<Photo> phts = pht.getPhotoById(id);
+            LinkedList<Photo> phts = pht.getPhotoById(id);            
             model.addAttribute("vbl", vbl);
             model.addAttribute("phts", phts);
         } catch (Exception e) {
@@ -74,8 +77,8 @@ public class ProprioController {
             Login log = (Login) request.getSession().getAttribute("user");
             String username = log.getUsername();
             String idUser = new Utilisateur().getIdUtilisateurByUsername(username).getId();
-            V_biens_lib vb = new V_biens_lib();
-            LinkedList<V_biens_lib> vbl = vb.getBiensByPropr(idUser);
+            V_detail_biens_disponibilite vb = new V_detail_biens_disponibilite();
+            LinkedList<V_detail_biens_disponibilite> vbl = vb.getBiensByPropr(idUser);
             model.addAttribute("vbl", vbl);
         } catch (Exception e) {
             // TODO: handle exception

@@ -56,6 +56,9 @@
                 <th>
                   <span>Gains</span>
                 </th>
+                <th>
+                  <span>Mois Numero</span>
+                </th>
               </tr>
             </thead>
             <tbody class="table-border-bottom-0">
@@ -64,7 +67,8 @@
                 <td th:text="${cps.getBiens()}"></td>
                 <td  th:text="${cps.getCa()}"></td>
                 <td  th:text="${cps.getCo()}"></td>
-                <td  th:text="${cps.getGains()}"></td>
+                <td  th:text="${cps.formatGains()}"></td>
+                <td  th:text="${cps.getRow_num()}"></td>
             </tr>
             </tbody>
           </table>          

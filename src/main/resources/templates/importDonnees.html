@@ -1,69 +1,75 @@
 <section>
   <div class="card-body">
-      <div class="container-xxl flex-grow-1 container-p-y">
-          <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"></span>Donnees</h4>
-          <form id="paiementForm" enctype="multipart/form-data" method="post" th:action="@{/admin/saveDonnees}">
-            <div th:if="${message!=''}" th:classappend="${type}" class="alert text-light border-0 alert-dismissible fade show" role="alert">
-              <span th:text="${message}" id="erreur"> </span>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <div class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show" role="alert" style="display: none;" id="erreur">
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <div class="alert alert-success bg-success text-light border-0 alert-dismissible fade show" role="alert" style="display: none;" id="success">
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>  
-            <div class="row">
-                  <!-- HTML5 Inputs -->
-                  <div class="card mb-4">
-                      <div class="card-body">
-                          <div class="mb-3 row">
-                              <label for="formFileMultiple" class="form-label">Etape</label>
-                              <input class="form-control" type="file" name="etape" id="formFileMultiple" multiple="">
-                              <div class="col-md-10">
-                              <label for="formFileMultiple" class="form-label">Resultat</label>
-                              <input class="form-control" type="file" name="resultat" id="formFileMultiple" multiple="">
-                              <div class="col-md-10">
-                                  <button type="submit" class="btn btn-primary">Valider</button>
-                              </div>
-                          </div>
-                          <p id="responseMessage" th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
-                      </div>
+    <div class="container-xxl flex-grow-1 container-p-y">
+      <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"></span>Donnees</h4>
+      <form id="paiementForm" enctype="multipart/form-data" method="post" th:action="@{/admin/saveDonnees}">
+        <div th:if="${message!=''}" th:classappend="${type}"
+          class="alert text-light border-0 alert-dismissible fade show" role="alert">
+          <span th:text="${message}" id="erreur"> </span>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div class="alert alert-danger bg-danger text-light border-0 alert-dismissible fade show" role="alert"
+          style="display: none;" id="erreur">
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div class="alert alert-success bg-success text-light border-0 alert-dismissible fade show" role="alert"
+          style="display: none;" id="success">
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div class="row">
+          <!-- HTML5 Inputs -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="mb-3 row">
+                <label for="formFileMultiple" class="form-label">Biens</label>
+                <input class="form-control" type="file" name="biens" id="formFileMultiple" multiple="">
+                <div class="col-md-10">
+                  <label for="formFileMultiple" class="form-label">Commission</label>
+                  <input class="form-control" type="file" name="commission" id="formFileMultiple" multiple="">
+                  <div class="col-md-10">
+                    <label for="formFileMultiple" class="form-label">Location</label>
+                    <input class="form-control" type="file" name="location" id="formFileMultiple" multiple="">
+                    <div class="col-md-10">
+                      <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
                   </div>
+                  <p id="responseMessage" th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+                </div>
               </div>
-          </form>
-      </div>
+            </div>
+      </form>
+    </div>
   </div>
 </section>
 
 <script src="/assets/js/jquery-3.7.1.min.js"></script>
 <script th:inline="javascript">
-  $(document).ready(function() {
-      $('#formulaire').submit(function(event) {
-          event.preventDefault();
-          
-          var formData = new FormData();
-        formData.append('paiement', $('#formFileMultiple')[0].files[0]);
-              console.log(formData);
-          $.ajax({  
-              type: 'POST',
-              url: '/test/paiementP',
-              data: formData,
-              success: function(response) {
-                      // Validation réussie, rediriger ou faire d'autres actions
-                      alert('Fichier de paiement exporter avec succes!');
-                      console.log(response);
-                      $('#erreur').removeClass('alert-danger').addClass('alert-success').text('Paiement reussi').show();
-                      $('#erreur').removeClass('bg-danger').addClass('bg-success');
-              },
-              error: function(xhr, status, error) {
-                  console.error(xhr);
-                  console.log('error '+xhr.responseText);
-                  $('#erreur').removeClass('alert-success').addClass('alert-danger').text(xhr.responseText).show();
-                  $('#erreur').removeClass('bg-success').addClass('bg-danger');
+  $(document).ready(function () {
+    $('#formulaire').submit(function (event) {
+      event.preventDefault();
 
-              }
-          });
+      var formData = new FormData();
+      formData.append('paiement', $('#formFileMultiple')[0].files[0]);
+      console.log(formData);
+      $.ajax({
+        type: 'POST',
+        url: '/test/paiementP',
+        data: formData,
+        success: function (response) {
+          // Validation réussie, rediriger ou faire d'autres actions
+          alert('Fichier de paiement exporter avec succes!');
+          console.log(response);
+          $('#erreur').removeClass('alert-danger').addClass('alert-success').text('Paiement reussi').show();
+          $('#erreur').removeClass('bg-danger').addClass('bg-success');
+        },
+        error: function (xhr, status, error) {
+          console.error(xhr);
+          console.log('error ' + xhr.responseText);
+          $('#erreur').removeClass('alert-success').addClass('alert-danger').text(xhr.responseText).show();
+          $('#erreur').removeClass('bg-success').addClass('bg-danger');
+
+        }
       });
+    });
   });
 </script>

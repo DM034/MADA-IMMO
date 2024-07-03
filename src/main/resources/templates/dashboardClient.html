@@ -53,14 +53,18 @@
                 <th>
                   <span>Etat</span>
                 </th>
+                <th>
+                  <span>Mois Numero</span>
+                </th>
               </tr>
             </thead>
             <tbody class="table-border-bottom-0">
               <tr th:each="loy : ${loy}">
                 <td th:text="${loy.getDate()}"></td>
                 <td th:text="${loy.getBiens()}"></td>
-                <td th:classappend="${loy.getColorsMont()}"  th:text="${loy.getMontant()}"></td>
+                <td th:classappend="${loy.getColorsMont()}"  th:text="${loy.formatMontant()}"></td>
                 <td th:classappend="${loy.getColors()}" th:text="${loy.getStatut_paiement()}"></td>
+                <td th:text="${loy.getRow_num()}"></td>
             </tr>
             </tbody>
           </table>          
