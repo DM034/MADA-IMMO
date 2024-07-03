@@ -77,8 +77,14 @@ INSERT INTO loyer_mensuel (idBiens, montant, date_changement) VALUES
 
 -- Pour le bien BIE00002
 INSERT INTO loyer_mensuel (idBiens, montant, date_changement) VALUES
-('BIE00001', 550000, '2024-06-01'),
-('BIE00002', 750000, '2024-07-01');
+('BIE00023', 2000000, '2023-03-10');
+
+
+INSERT INTO photo VALUES
+(default, 'BIE00001','MADA-IMMO.png'),
+(default, 'BIE00001','parking.png'),
+(default, 'BIE00001','UTM.png'),
+(default, 'BIE00002','UTM.png');
 
 
 

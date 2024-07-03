@@ -5,29 +5,18 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.LinkedList;
 
-import immobilier.immobilier.tools.Tools;
-
-public class ChiffreProprio {
+public class Disponiblite {
     String idProprio;
     String proprio;
     String idBiens;
     String biens;
-    String region;
+    String regions;
     String type;
-    String idLocation;
-    String date;
-    Double ca;
-    Double co;
-    Double gains;
-    String row_num;
+    String date_disponibilite;
 
-    public String formatGains(){
-        return Tools.formatThousand(this.gains);
-    }
-
-    public LinkedList<ChiffreProprio> getChiffreProprioSansComm1erMoisEntre2Dates(String idProprio, String date1, String date2, Connection con)
+    public LinkedList<Disponiblite> getDisponibiliteBienByIdBien(String idBiens, Connection con)
             throws Exception {
-        LinkedList<ChiffreProprio> result = new LinkedList<ChiffreProprio>();
+        LinkedList<Disponiblite> result = new LinkedList<Disponiblite>();
         boolean open = false;
         if (con == null) {
             try {
@@ -62,7 +51,7 @@ public class ChiffreProprio {
             +"            (SELECT la.montant  "
             +"             FROM loyer_mensuel la "
             +"             WHERE la.idBiens = b.id "
-            +"               AND DATE_TRUNC('month', la.date_changement) < mc.mois "
+            +"               AND la.date_changement <= l.date_debut "
             +"             ORDER BY la.date_changement DESC "
             +"             LIMIT 1), "
             +"            b.loyer "
@@ -78,50 +67,36 @@ public class ChiffreProprio {
             +"    WHERE mc.mois >= DATE_TRUNC('month', l.date_debut) "
             +"      AND mc.mois < DATE_TRUNC('month', l.date_debut + (l.duree || ' months')::INTERVAL) "
             +"      AND u.profil = 'proprio' "
+            +"), derniere_location AS ( "
+            +"    SELECT  "
+            +"        bien_id, "
+            +"        MAX(date_fin) AS derniere_date_fin "
+            +"    FROM locations_mensuelles "
+            +"    GROUP BY bien_id "
             +") "
-            +"SELECT  "
+            +"SELECT DISTINCT "
             +"    lm.utilisateur_id as idProprio, "
             +"    lm.utilisateur_nom as proprio, "
             +"    lm.bien_id as idBiens, "
             +"    lm.biens as biens, "
             +"    lm.bien_adresse as region, "
             +"    lm.bien_type as type, "
-            +"    lm.location_id as idLocation, "
-            +"    TO_CHAR(lm.mois, 'YYYY-MM-DD') AS date, "
-            +"    CASE  "
-            +"        WHEN lm.row_num = 1 THEN lm.montant_mensuel * 2 "
-            +"        ELSE lm.montant_mensuel "
-            +"    END AS ca, "
-            +"    CASE  "
-            +"        WHEN lm.row_num = 1 THEN 0 "
-            +"        ELSE lm.montant_mensuel * (lm.commission_pourcentage::float / 100) "
-            +"    END AS co, "
-            +"    CASE  "
-            +"        WHEN lm.row_num = 1 THEN lm.montant_mensuel "
-            +"        ELSE lm.montant_mensuel * (1 - lm.commission_pourcentage::float / 100) "
-            +"    END AS gains, "
-            +"    lm.row_num "
+            +"    TO_CHAR(DATE_TRUNC('month', COALESCE(dl.derniere_date_fin + INTERVAL '1 day', CURRENT_DATE)), 'YYYY-MM-DD') AS date_disponibilite "
             +"FROM locations_mensuelles lm "
-            +"WHERE lm.utilisateur_id = '"+idProprio+"'  "
-            +"  AND lm.mois BETWEEN DATE_TRUNC('month', '"+date1+"'::date)  "
-            +"  AND DATE_TRUNC('month', '"+date2+"'::date) "
-            +"ORDER BY lm.utilisateur_id, lm.bien_id, lm.location_id, lm.mois";
+            +"LEFT JOIN derniere_location dl ON lm.bien_id = dl.bien_id "
+            +"WHERE lm.bien_id = '"+idBiens+"' "
+            +"ORDER BY lm.utilisateur_id, lm.bien_id";
             System.out.println(sql);
             ResultSet rSet = stat.executeQuery(sql);
             while (rSet.next()) {
-                ChiffreProprio vrest = new ChiffreProprio(
+                Disponiblite vrest = new Disponiblite(
                         rSet.getString(1),
                         rSet.getString(2),
                         rSet.getString(3),
                         rSet.getString(4),
                         rSet.getString(5),
                         rSet.getString(6),
-                        rSet.getString(7),
-                        rSet.getString(8),
-                        rSet.getDouble(9),
-                        rSet.getDouble(10),
-                        rSet.getDouble(11),
-                        rSet.getString(12));
+                        rSet.getString(7));
                 result.add(vrest);
             }
             if (open == true) {
@@ -139,9 +114,9 @@ public class ChiffreProprio {
         return result;
     }
 
-    public LinkedList<ChiffreProprio> getChiffreProprioEntre2Dates(String idProprio, String date1, String date2, Connection con)
+    public LinkedList<Disponiblite> getDisponibiliteBineByIdPropr(String idPropr, Connection con)
             throws Exception {
-        LinkedList<ChiffreProprio> result = new LinkedList<ChiffreProprio>();
+        LinkedList<Disponiblite> result = new LinkedList<Disponiblite>();
         boolean open = false;
         if (con == null) {
             try {
@@ -170,6 +145,8 @@ public class ChiffreProprio {
             +"        tb.nom AS bien_type, "
             +"        u.id AS utilisateur_id, "
             +"        u.username AS utilisateur_nom, "
+            +"        l.date_debut, "
+            +"        l.date_debut + (l.duree || ' months')::INTERVAL AS date_fin, "
             +"        COALESCE( "
             +"            (SELECT la.montant  "
             +"             FROM loyer_mensuel la "
@@ -179,48 +156,47 @@ public class ChiffreProprio {
             +"             LIMIT 1), "
             +"            b.loyer "
             +"        ) AS montant_mensuel, "
-            +"        c.valeur AS commission_pourcentage "
+            +"        c.valeur AS commission_pourcentage, "
+            +"        ROW_NUMBER() OVER (PARTITION BY l.id ORDER BY mc.mois) AS row_num "
             +"    FROM mois_complets mc "
-            +"    JOIN location l ON mc.mois >= DATE_TRUNC('month', l.date_debut) "
-            +"        AND mc.mois < DATE_TRUNC('month', l.date_debut + (l.duree || ' months')::INTERVAL) "
+            +"    CROSS JOIN location l "
             +"    JOIN biens b ON l.idBiens = b.id "
             +"    JOIN type_biens tb ON b.idType = tb.id "
             +"    JOIN commission c ON tb.id = c.idType "
             +"    JOIN utilisateur u ON b.idProprio = u.id "
-            +"    WHERE u.profil = 'proprio' "
+            +"    WHERE mc.mois >= DATE_TRUNC('month', l.date_debut) "
+            +"      AND mc.mois < DATE_TRUNC('month', l.date_debut + (l.duree || ' months')::INTERVAL) "
+            +"      AND u.profil = 'proprio' "
+            +"), derniere_location AS ( "
+            +"    SELECT  "
+            +"        bien_id, "
+            +"        MAX(date_fin) AS derniere_date_fin "
+            +"    FROM locations_mensuelles "
+            +"    GROUP BY bien_id "
             +") "
-            +"SELECT  "
+            +"SELECT DISTINCT "
             +"    lm.utilisateur_id as idProprio, "
             +"    lm.utilisateur_nom as proprio, "
             +"    lm.bien_id as idBiens, "
             +"    lm.biens as biens, "
             +"    lm.bien_adresse as region, "
             +"    lm.bien_type as type, "
-            +"    lm.location_id as idLocation, "
-            +"    TO_CHAR(lm.mois, 'YYYY-MM-DD') AS date, "
-            +"    lm.montant_mensuel AS ca, "
-            +"    lm.montant_mensuel * (lm.commission_pourcentage::float / 100) AS co, "
-            +"    lm.montant_mensuel * (1 - lm.commission_pourcentage::float / 100) AS gains "
+            +"    TO_CHAR(DATE_TRUNC('month', COALESCE(dl.derniere_date_fin + INTERVAL '1 day', CURRENT_DATE)), 'YYYY-MM-DD') AS date_disponibilite "
             +"FROM locations_mensuelles lm "
-            +"WHERE lm.utilisateur_id = '"+idProprio+"'  "
-            +"  AND lm.mois BETWEEN DATE_TRUNC('month', '"+date1+"'::date)  "
-            +"  AND DATE_TRUNC('month', '"+date2+"'::date) "
-            +"ORDER BY lm.utilisateur_id, lm.bien_id, lm.location_id, lm.mois";
+            +"LEFT JOIN derniere_location dl ON lm.bien_id = dl.bien_id "
+            +"WHERE lm.utilisateur_id = '"+idPropr+"' "
+            +"ORDER BY lm.utilisateur_id, lm.bien_id";
             System.out.println(sql);
             ResultSet rSet = stat.executeQuery(sql);
             while (rSet.next()) {
-                ChiffreProprio vrest = new ChiffreProprio(
+                Disponiblite vrest = new Disponiblite(
                         rSet.getString(1),
                         rSet.getString(2),
                         rSet.getString(3),
                         rSet.getString(4),
                         rSet.getString(5),
                         rSet.getString(6),
-                        rSet.getString(7),
-                        rSet.getString(8),
-                        rSet.getDouble(9),
-                        rSet.getDouble(10),
-                        rSet.getDouble(11));
+                        rSet.getString(7));
                 result.add(vrest);
             }
             if (open == true) {
@@ -238,39 +214,18 @@ public class ChiffreProprio {
         return result;
     }
 
-    public ChiffreProprio() {
+    public Disponiblite() {
     }
 
-    public ChiffreProprio(String idProprio, String proprio, String idBiens, String biens, String region, String type, String idLocation, String date, Double ca, Double co, Double gains) {
+    public Disponiblite(String idProprio, String proprio, String idBiens, String biens, String regions, String type, String date_disponibilite) {
         this.idProprio = idProprio;
         this.proprio = proprio;
         this.idBiens = idBiens;
         this.biens = biens;
-        this.region = region;
+        this.regions = regions;
         this.type = type;
-        this.idLocation = idLocation;
-        this.date = date;
-        this.ca = ca;
-        this.co = co;
-        this.gains = gains;
+        this.date_disponibilite = date_disponibilite;
     }
-
-
-    public ChiffreProprio(String idProprio, String proprio, String idBiens, String biens, String region, String type, String idLocation, String date, Double ca, Double co, Double gains, String row_num) {
-        this.idProprio = idProprio;
-        this.proprio = proprio;
-        this.idBiens = idBiens;
-        this.biens = biens;
-        this.region = region;
-        this.type = type;
-        this.idLocation = idLocation;
-        this.date = date;
-        this.ca = ca;
-        this.co = co;
-        this.gains = gains;
-        this.row_num = row_num;
-    }
-
 
     public String getIdProprio() {
         return this.idProprio;
@@ -304,12 +259,12 @@ public class ChiffreProprio {
         this.biens = biens;
     }
 
-    public String getRegion() {
-        return this.region;
+    public String getRegions() {
+        return this.regions;
     }
 
-    public void setRegion(String region) {
-        this.region = region;
+    public void setRegions(String regions) {
+        this.regions = regions;
     }
 
     public String getType() {
@@ -320,52 +275,12 @@ public class ChiffreProprio {
         this.type = type;
     }
 
-    public String getIdLocation() {
-        return this.idLocation;
+    public String getDate_disponibilite() {
+        return this.date_disponibilite;
     }
 
-    public void setIdLocation(String idLocation) {
-        this.idLocation = idLocation;
-    }
-
-    public String getDate() {
-        return this.date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public Double getCa() {
-        return this.ca;
-    }
-
-    public void setCa(Double ca) {
-        this.ca = ca;
-    }
-
-    public Double getCo() {
-        return this.co;
-    }
-
-    public void setCo(Double co) {
-        this.co = co;
-    }
-
-    public Double getGains() {
-        return this.gains;
-    }
-
-    public void setGains(Double gains) {
-        this.gains = gains;
-    }
-
-    public String getRow_num() {
-        return this.row_num;
-    }
-
-    public void setRow_num(String row_num) {
-        this.row_num = row_num;
+    public void setDate_disponibilite(String date_disponibilite) {
+        this.date_disponibilite = date_disponibilite;
     }
 
 }

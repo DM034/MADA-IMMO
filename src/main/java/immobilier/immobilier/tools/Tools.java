@@ -15,63 +15,6 @@ import java.util.List;
 
 public class Tools {
 
-    public static String truncateTimestamp(Timestamp timestamp) {
-        if (timestamp == null) {
-            return "N/A"; // Retourne "N/A" si le timestamp est null
-        }
-        // Convertir Timestamp en LocalDateTime
-        LocalDateTime dateTime = timestamp.toLocalDateTime();
-        // Formatage de l'objet LocalDateTime en chaîne de caractères avec le format souhaité
-        return dateTime.format(outputFormatter);
-    }
-
-    private static final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSSSSS");
-    private static final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    public static String formatDateTime(String dateTimeStr) {
-        LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, inputFormatter);
-        return dateTime.format(outputFormatter);
-    }
-
-    public static LinkedList<String> formatDateTimeList(LinkedList<String> dateTimeList) {
-        // Définition du format d'entrée
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSSSS");
-
-        // Définition du format de sortie
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        // Liste pour stocker les dates formatées
-        LinkedList<String> formattedDateList = new LinkedList<>();
-
-        for (String dateTimeStr : dateTimeList) {
-            // Conversion de la chaîne de caractères en objet LocalDateTime
-            LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, inputFormatter);
-
-            // Formatage de l'objet LocalDateTime en chaîne de caractères avec le format
-            // souhaité
-            String formattedDate = dateTime.format(outputFormatter);
-
-            // Ajout de la date formatée à la liste
-            formattedDateList.add(formattedDate);
-        }
-
-        return formattedDateList;
-    }
-
-    public static String formatDateTimeString(String dateTimeStr) {
-        // Définition du format d'entrée
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
-
-        // Conversion de la chaîne de caractères en objet LocalDateTime
-        LocalDateTime dateTime = LocalDateTime.parse(dateTimeStr, inputFormatter);
-
-        // Définition du format de sortie
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        // Formatage de l'objet LocalDateTime en chaîne de caractères avec le format souhaité
-        return dateTime.format(outputFormatter);
-    }
-
     public static String formatSecondsToHHMMSS(Double seconds) {
         int hours = (int) (seconds.doubleValue() / 3600);
         int minutes = (int) ((seconds.doubleValue() % 3600) / 60);
@@ -110,6 +53,18 @@ public class Tools {
             return newFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static java.sql.Date convertStringToDate(String dateStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            LocalDate localDateTime = LocalDate.parse(dateStr, formatter);
+            return java.sql.Date.valueOf(localDateTime);
+        } catch (DateTimeParseException e) {
+            System.out.println("Erreur: Format de date incorrect");
             return null;
         }
     }

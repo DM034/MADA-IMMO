@@ -12,6 +12,7 @@ import immobilier.immobilier.model.Conn;
 import immobilier.immobilier.model.Login;
 import immobilier.immobilier.model.LoyerClient;
 import immobilier.immobilier.model.Utilisateur;
+import immobilier.immobilier.tools.Tools;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
@@ -27,9 +28,12 @@ public class ClientController {
             String username = log.getUsername();
             String idUser = new Utilisateur().getIdUtilisateurByUsername(username).getId();
             LoyerClient l = new LoyerClient();
-            LinkedList<LoyerClient> loy = l.getLoyerClientEntre2Dates(idUser, date1, date2, con);
-            LinkedList<LoyerClient> ap = l.getLoyerClientAPayerEntre2Dates(idUser, date1, date2, con);
-            LinkedList<LoyerClient> p = l.getLoyerClientPayeEntre2Dates(idUser, date1, date2, con);
+            LinkedList<LoyerClient> loy = l.getLoyerClientDouble1erMoisEntre2Dates(idUser, date1, date2, con);
+            LinkedList<LoyerClient> ap = l.getLoyerClientDouble1erMoisAPayerEntre2Dates(idUser, date1, date2, con);
+            LinkedList<LoyerClient> p = l.getLoyerClientDouble1erMoisPayeEntre2Dates(idUser, date1, date2, con);
+            // LinkedList<LoyerClient> loy = l.getLoyerClientEntre2Dates(idUser, date1, date2, con);
+            // LinkedList<LoyerClient> ap = l.getLoyerClientAPayerEntre2Dates(idUser, date1, date2, con);
+            // LinkedList<LoyerClient> p = l.getLoyerClientPayeEntre2Dates(idUser, date1, date2, con);
             Double apayer = 0.;
             Double paye = 0.;
 
@@ -40,9 +44,9 @@ public class ClientController {
                 paye = paye + paClient.getMontant();
             }
 
-            model.addAttribute("loy", loy);
-            model.addAttribute("apayer", apayer);
-            model.addAttribute("paye", paye);
+            model.addAttribute("loy",loy);
+            model.addAttribute("apayer", Tools.formatThousand(apayer));
+            model.addAttribute("paye", Tools.formatThousand(paye));
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();

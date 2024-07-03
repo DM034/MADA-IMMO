@@ -53,13 +53,17 @@
                 <th>
                   <span onclick="sortTable(2)">Commissions</span><span class="sort-icon"></span>
                 </th>
+                <th>
+                  <span onclick="sortTable(3)">Mois Numero</span><span class="sort-icon"></span>
+                </th>
               </tr>
             </thead>
             <tbody class="table-border-bottom-0">
               <tr th:each="cas : ${cas}">
                 <td th:text="${cas.getDate()}"></td>
-                <td  th:text="${cas.getChiffre_affaires()}"></td>
-                <td  th:text="${cas.getCommissions()}"></td>
+                <td  th:text="${cas.getCAFormat()}"></td>
+                <td  th:text="${cas.getCommissionFormat()}"></td>
+                <td  th:text="${cas.getMois_numero()}"></td>
             </tr>
             </tbody>
           </table>

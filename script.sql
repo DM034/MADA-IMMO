@@ -44,6 +44,9 @@ CREATE TABLE biens (
     FOREIGN KEY (idType) REFERENCES type_biens(id),
     primary key(id) 
 );
+ALTER TABLE biens ADD column reference VARCHAR;
+ALTER TABLE biens ADD CONSTRAINT unique_refbiens UNIQUE (reference);
+
 
 CREATE SEQUENCE seq_commission START WITH 1;
 CREATE TABLE commission (
@@ -66,6 +69,8 @@ CREATE TABLE location (
     FOREIGN KEY (idClient) REFERENCES utilisateur(id),
     PRIMARY KEY (id)
 );
+ALTER TABLE location ADD column reference VARCHAR;
+ALTER TABLE location ADD CONSTRAINT unique_refloc UNIQUE (reference);
 
 CREATE SEQUENCE seq_photo START WITH 1;
 CREATE TABLE photo (
@@ -262,8 +267,8 @@ SELECT
         ELSE 'À payer'
     END AS statut_paiement
 FROM locations_mensuelles lm
-WHERE lm.client_id = 'USE00004'
-  AND lm.mois BETWEEN DATE_TRUNC('month', '2024-03-15'::DATE) AND DATE_TRUNC('month', '2024-08-30'::DATE)
+WHERE lm.client_id = 'USE00031'
+  AND lm.mois BETWEEN DATE_TRUNC('month', '2024-03-15'::DATE) AND DATE_TRUNC('month', '2025-08-30'::DATE)
 ORDER BY lm.utilisateur_id, lm.bien_id, lm.location_id, lm.mois;
 
 
