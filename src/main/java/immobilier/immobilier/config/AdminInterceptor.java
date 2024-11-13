@@ -1,7 +1,7 @@
 package immobilier.immobilier.config;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import immobilier.immobilier.model.Login;
 
 import org.springframework.web.servlet.HandlerInterceptor;

@@ -13,7 +13,7 @@ import immobilier.immobilier.model.Login;
 import immobilier.immobilier.model.LoyerClient;
 import immobilier.immobilier.model.Utilisateur;
 import immobilier.immobilier.tools.Tools;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/client")

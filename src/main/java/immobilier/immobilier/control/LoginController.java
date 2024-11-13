@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import immobilier.immobilier.model.Utilisateur;
 import immobilier.immobilier.model.Login;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/")
