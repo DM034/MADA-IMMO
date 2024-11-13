@@ -18,7 +18,7 @@ import immobilier.immobilier.model.Utilisateur;
 import immobilier.immobilier.model.V_biens_lib;
 import immobilier.immobilier.model.V_detail_biens_disponibilite;
 import immobilier.immobilier.tools.Tools;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/proprio")
